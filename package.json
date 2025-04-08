@@ -1,0 +1,26 @@
+{
+  "name": "word-translate",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && pnpm build:content && pnpm build:background",
+    "build:content": "vite build -c vite.content.config.js",
+    "build:background": "vite build -c vite.background.config.js",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "axios": "^1.8.4",
+    "naive-ui": "^2.41.0",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "less": "^4.3.0",
+    "unplugin-auto-import": "^19.1.2",
+    "unplugin-vue-components": "^28.4.1",
+    "vite": "^6.2.0",
+    "vite-plugin-static-copy": "^2.3.0"
+  }
+}
