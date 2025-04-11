@@ -1,10 +1,13 @@
 import { ERROR_CODE } from '@/const/error'
 import axios from 'axios'
 
-let ajax = axios.create({
-  baseURL: 'http://localhost:3000/api',
-  timeout: 15000,
-})
+const baseConfig = {
+  // baseURL: 'https://localhost:3000/api',
+  baseURL: 'https://yiciyuan.net.cn:3000/api',
+  timeout: 20000,
+}
+
+let ajax = axios.create({ ...baseConfig})
 
 // 用于存储请求的 Map
 const pendingRequests = new Map()
@@ -73,7 +76,7 @@ function initAjax(adapter) {
 
       // 添加 token
       const token = await getToken()
-      if (token) {
+      if (!config.headers.Authorization && token) {
         config.headers.Authorization = formatToken(token)
       }
 
@@ -121,6 +124,7 @@ function initAjax(adapter) {
               config.headers.Authorization = formatToken(res.accessToken)
               requestQueue.forEach(cb => cb(res.accessToken))
               requestQueue = []
+              isRefreshing = false
               return ajax(config)
             })
             .finally(() => {
@@ -143,10 +147,7 @@ function initAjax(adapter) {
 }
 
 function resetAjax() {
-  ajax = axios.create({
-    baseURL: 'http://localhost:3000/api',
-    timeout: 15000,
-  })
+  ajax = axios.create({ ...baseConfig })
 }
 
 export {

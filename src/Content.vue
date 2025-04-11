@@ -4,6 +4,7 @@ import { zhCN, dateZhCN } from 'naive-ui'
 import Login from './Login.vue';
 import Translate from './Translate.vue';
 import { initAjax } from './init';
+import { getPosition } from './utils/position'
 
 // 用户登录状态
 const isLoggedIn = ref(false);
@@ -51,6 +52,20 @@ const onLogin = (data) => {
   isLoggedIn.value = true;
 };
 
+function updatePosition() {
+  const el = document.getElementById('word-translate-app');
+  
+  if (!el) {
+    return;
+  }
+
+  const { width, height, top, left } = el.getBoundingClientRect();
+  const position = getPosition(width, height, top, left);
+
+  el.style.top = `${position.top}px`;
+  el.style.left = `${position.left}px`;
+}
+
 // 检查登录状态
 onMounted(() => {
   const localFlag = localStorage.getItem('isLoggedIn') || 0;
@@ -70,7 +85,7 @@ onMounted(() => {
     </div>
     
     <!-- 翻译界面 -->
-    <Translate v-else />
+    <Translate v-else @update-position="updatePosition" />
   </n-config-provider>
 </template>
 
@@ -80,6 +95,7 @@ onMounted(() => {
   background: #fff;
   max-height: 500px;
   width: 400px;
+  color: #1f2225;
 
   .subtitle {
     font-size: 14px;
