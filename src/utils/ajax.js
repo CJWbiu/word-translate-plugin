@@ -3,7 +3,7 @@ import axios from 'axios'
 
 const baseConfig = {
   // baseURL: 'https://localhost:3000/api',
-  baseURL: 'https://yiciyuan.net.cn:3000/api',
+  baseURL: 'https://yiciyuan.net.cn/api',
   timeout: 20000,
 }
 

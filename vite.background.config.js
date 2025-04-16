@@ -8,7 +8,7 @@ export default defineConfig({
     },
   },
   build: {
-    minify: false,
+    minify: true,
     outDir: 'dist',
     emptyOutDir: false,
     lib: {

@@ -4,18 +4,14 @@ export const getPosition = (width, height, top, left) => {
   const viewportHeight = window.innerHeight;
   const gap = 20;
 
-  // 计算 mountEl 的位置，并进行边缘判断
-  top = top + window.scrollY;
-  left = left + window.scrollX;
-
   // 如果超出右边界，调整 left 值
   if (left + width > viewportWidth) {
     left = viewportWidth - width - gap;
   }
 
   // 如果超出下边界，调整 top 值
-  if (top + height > viewportHeight + window.scrollY) {
-    top = viewportHeight + window.scrollY - height - gap;
+  if (top + height > viewportHeight) {
+    top = viewportHeight - height - gap;
   }
 
   // 确保 top 和 left 不小于 0（避免超出左边界或上边界）

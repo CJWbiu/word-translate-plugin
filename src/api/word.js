@@ -28,3 +28,7 @@ export function getWordDetail(word, config) {
 export function addUserWords(infos) {
   return ajax.post('/user-dict', infos)
 }
+
+export function getVoice(word, lang = 'en') {
+  return ajax.get('/dictionary/voice', { params: { word, lang }, responseType: 'arraybuffer' })
+}

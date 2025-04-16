@@ -6,12 +6,16 @@ import { getPosition } from './utils/position'
 let unmount = null;
 let popup = null;
 let button = null;
+const DragElID = 'x-yiciyuan-drag-bar';
 
 const supportDrag = (mountEl) => {
-  // 拖拽功能实现
-  let isDragging = false; // 标记是否正在拖拽
-  let offsetX = 0; // 鼠标按下时相对于元素左上角的偏移量
+  let isDragging = false;
+  let offsetX = 0;
   let offsetY = 0;
+  let startLeft = 0;
+  let startTop = 0;
+  let currentX = 0;
+  let currentY = 0;
   const viewportWidth = window.innerWidth;
   const viewportHeight = window.innerHeight;
 
@@ -19,36 +23,44 @@ const supportDrag = (mountEl) => {
 
   // 鼠标按下事件
   mountEl.addEventListener('mousedown', (e) => {
-    if (e.target.id!== 'word-translate-bar') return;
+    if (e.target.id !== DragElID) return;
 
     isDragging = true;
-    offsetX = e.clientX - mountEl.offsetLeft; // 计算水平偏移量
-    offsetY = e.clientY - mountEl.offsetTop; // 计算垂直偏移量
-    mountEl.style.opacity = '0.8'; // 拖拽时降低透明度以提示用户
+    // 记录初始位置
+    const rect = mountEl.getBoundingClientRect();
+    startLeft = rect.left;
+    startTop = rect.top;
+    offsetX = e.clientX - startLeft;
+    offsetY = e.clientY - startTop;
+    mountEl.style.opacity = '0.9';
+    // 禁用过渡动画，拖拽时立即响应
+    mountEl.style.transition = 'none';
   });
 
-  // 鼠标移动事件
   document.addEventListener('mousemove', (e) => {
-    if (!isDragging || e.target.id !== 'word-translate-bar') return;
+    if (!isDragging) return;
 
     // 计算新的位置
     let newLeft = e.clientX - offsetX;
     let newTop = e.clientY - offsetY;
 
-    // 边界限制（确保元素不超出视口范围）
+    // 边界限制
     newLeft = Math.max(0, Math.min(newLeft, viewportWidth - width));
     newTop = Math.max(0, Math.min(newTop, viewportHeight - height));
 
-    // 更新元素位置
-    mountEl.style.left = `${newLeft}px`;
-    mountEl.style.top = `${newTop}px`;
+    currentX = newLeft;
+    currentY = newTop;
+
+    // 使用 transform 实现拖拽
+    mountEl.style.transform = `translate(${currentX}px, ${currentY}px)`;
   });
 
-  // 鼠标松开事件
   document.addEventListener('mouseup', () => {
     if (isDragging) {
       isDragging = false;
-      mountEl.style.opacity = '1'; // 恢复透明度
+      mountEl.style.opacity = '1';
+      // 拖拽结束后保留最终位置
+      mountEl.style.transition = '';
     }
   });
 }
@@ -67,12 +79,13 @@ const createMountPoint = (rect) => {
   const wrapEl = document.createElement('div');
   wrapEl.id = 'word-translate-app';
   wrapEl.style.cssText = `
-    position: absolute;
-    top: ${top}px;
-    left: ${left}px;
+    position: fixed;
+    top: 0;
+    left: 0;
     z-index: 9999;
     background: #fff;
-    box-shadow: 0 0 3px 1px #ddd;`;
+    box-shadow: 0 0 3px 1px #ddd;
+    transform: translate(${left}px, ${top}px);`;
   const barEl = document.createElement('div');
   barEl.style.cssText = `
     width: 100%;
@@ -84,7 +97,7 @@ const createMountPoint = (rect) => {
     cursor: move;
     border-bottom: 1px solid #ddd;`;
   barEl.innerText = '•••';
-  barEl.id = 'word-translate-bar';
+  barEl.id = DragElID;
 
   wrapEl.appendChild(barEl);
   wrapEl.appendChild(mountEl);

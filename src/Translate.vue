@@ -65,7 +65,14 @@ function onTranslate() {
 
 function onAdd() {
   disabledAdd.value = true;
-  addUserWords([{word: model.value.text}]).finally(() => {
+  addUserWords([{word: model.value.text}]).then(() => {
+    window.dispatchEvent(new CustomEvent('show-msg', {
+      detail: {
+        title: '添加成功',
+        type: 'success',
+      }
+    }))
+  }).finally(() => {
     disabledAdd.value = false;
   })
 }

@@ -1,7 +1,10 @@
-<script setup lang="ts">
+<script setup>
 /**
  * @file 单词发音
  */
+import { getVoice } from '@/api/word'
+import { computed, ref } from 'vue'
+import { VolumeMediumOutline } from '@vicons/ionicons5'
 
 const { info } = defineProps({
   info: {
@@ -9,6 +12,32 @@ const { info } = defineProps({
     default: () => ({}),
   },
 })
+
+const isPlaying = ref(false)
+const iconColor = computed(() => (isPlaying.value ? '#1989fa' : '#666'))
+
+async function playVoice() {
+  // 获取音频buffer数据
+  const data = await getVoice(info.word)
+  // 创建Blob对象
+  const blob = new Blob([data], { type: 'audio/mpeg' })
+  // 生成可用的URL
+  const audioUrl = URL.createObjectURL(blob)
+
+  const audio = new Audio(audioUrl)
+  try {
+    audio.play()
+  }
+  catch {
+    isPlaying.value = false
+  }
+  audio.addEventListener('play', () => {
+    isPlaying.value = true
+  })
+  audio.addEventListener('ended', () => {
+    isPlaying.value = false
+  })
+}
 </script>
 
 <template>
@@ -19,6 +48,8 @@ const { info } = defineProps({
     <div class="word-phonetic__text">
       {{ info.phonetic }}
     </div>
+
+    <n-icon size="18" :component="VolumeMediumOutline" :color="iconColor" @click="playVoice" />
   </div>
 </template>
 

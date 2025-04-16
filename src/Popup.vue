@@ -45,12 +45,23 @@ onMounted(() => {
       isLoggedIn.value = true;
     }
   });
+
+  window.addEventListener('show-msg', (e) => {
+    if (!e.detail) {
+      return;
+    }
+
+    alert.value = {
+      show: true,
+      ...e.detail,
+    };
+  })
 });
 </script>
 
 <template>
   <n-config-provider :locale="zhCN" :date-locale="dateZhCN" class="container">
-    <n-alert v-if="alert.show" :title="alert.title" :type="alert.type" bordered closable />
+    <n-alert v-show="alert.show" :title="alert.title" :type="alert.type" bordered closable />
     
     <!-- 登录表单 -->
     <div v-if="!isLoggedIn">

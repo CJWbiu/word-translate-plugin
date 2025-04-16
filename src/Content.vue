@@ -62,25 +62,34 @@ function updatePosition() {
   const { width, height, top, left } = el.getBoundingClientRect();
   const position = getPosition(width, height, top, left);
 
-  el.style.top = `${position.top}px`;
-  el.style.left = `${position.left}px`;
+  el.style.transform = `translate(${position.left}px, ${position.top}px)`;
 }
 
 // 检查登录状态
 onMounted(() => {
+  window.addEventListener('show-msg', (e) => {
+    if (!e.detail) {
+      return;
+    }
+
+    alert.value = {
+      show: true,
+      ...e.detail,
+    };
+  })
+
   const localFlag = localStorage.getItem('isLoggedIn') || 0;
   isLoggedIn.value = Number(localFlag) === 1;
-  return;
 });
 </script>
 
 <template>
-  <n-config-provider :locale="zhCN" :date-locale="dateZhCN" class="container">
+  <n-config-provider :locale="zhCN" :date-locale="dateZhCN" class="x-yiciyuan-container">
     <n-alert v-if="alert.show" :title="alert.title" :type="alert.type" bordered closable />
     
     <!-- 登录表单 -->
     <div v-if="!isLoggedIn">
-      <h2 class="subtitle">请先登录</h2>
+      <h2 class="x-yiciyuan-container__subtitle">请先登录</h2>
       <Login @login="onLogin"/>
     </div>
     
@@ -89,15 +98,15 @@ onMounted(() => {
   </n-config-provider>
 </template>
 
-<style scoped>
-.container {
+<style lang="less" scoped>
+.x-yiciyuan-container {
   padding: 20px;
   background: #fff;
   max-height: 500px;
   width: 400px;
   color: #1f2225;
 
-  .subtitle {
+  &__subtitle {
     font-size: 14px;
     font-weight: 600;
     padding: 8px 0;
