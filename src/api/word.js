@@ -1,7 +1,7 @@
 import { ajax } from '@/utils/ajax'
 
 export function getWordDetail(word, config) {
-  return ajax.get('/dictionary/query', { params: { word }, ...config }).then((res) => {
+  return ajax.get('/dictionary/query-word', { params: { word }, ...config }).then((res) => {
     const data = res.data
     let examples = []
 
